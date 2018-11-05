@@ -56,7 +56,7 @@ router.delete('/:userId', (req, res) => {
             delete obj.user[id]
 
             //JSON to String
-            obj = JSON.stringify(obj);
+            obj = JSON.stringify(obj, null, 4);
 
             //On écrit sur le fichier
             fs.writeFile('data.json', obj, 'utf8');
@@ -65,7 +65,7 @@ router.delete('/:userId', (req, res) => {
             obj = JSON.parse(obj)
 
             //Affichage du JSON
-            res.json(obj)
+            res.json(obj.user)
         }
     })
 });
@@ -83,8 +83,27 @@ router.post('/', (req, res) => {
             //On parse le JSON obtenu pour pouvoir l'utiliser
             obj = JSON.parse(data);
 
-            //On compte le nombre d'user dans le fichier qui définira l'id du nouvel user
-            var newUserId = Object.keys(obj.user).length + 1;
+            //Init de l'id de l'user à créer
+            var newUserId = 0;
+
+            //Variables du while
+            let end = false
+            let i = 0;
+
+
+            while(end == false){
+
+                //Si l'emplacement dans la liste est dispo
+                if(obj.list[i] == null){
+                    newUserId = i
+                    end = true
+                }
+                
+                //Sinon
+                else{
+                    i++
+                }
+            }
 
             //On créé le nouveau user a ajouter en suivant le model du JSON qui contient tout
             var newUser = {
@@ -94,6 +113,44 @@ router.post('/', (req, res) => {
 
             //On ajoute l'utilisateur
             obj.user[newUserId] = newUser;
+
+            // //JSON to String
+            obj = JSON.stringify(obj, null, 4);
+
+            //On écrit sur le fichier
+            fs.writeFile('data.json', obj, 'utf8');
+
+            //String to JSON
+            obj = JSON.parse(obj)
+
+            //Affichage du JSON
+            res.json(obj.user)
+        }
+    })
+})
+
+
+//PUT
+router.put('/', (req, res) => {
+    let updateUserName = req.body.name
+    let updateUserAge = req.body.age
+    let updateUserId = req.body.id
+    
+    fs.readFile('data.json', 'utf8', (err, data) => {
+        if(err){
+            console.error(err);
+        }else{
+            //On parse le JSON obtenu pour pouvoir l'utiliser
+            obj = JSON.parse(data);
+
+            //On créé le nouveau user a ajouter en suivant le model du JSON qui contient tout
+            var updateUser = {
+                "name" : updateUserName,
+                "age" : updateUserAge
+            }
+
+            //On ajoute l'utilisateur
+            obj.user[updateUserId] = updateUser;
 
             // //JSON to String
             obj = JSON.stringify(obj, null, 4);
