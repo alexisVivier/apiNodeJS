@@ -47,10 +47,10 @@ router.delete('/:userId', (req, res) => {
             console.error(err);
         }else{
             //On parse le JSON obtenu pour pouvoir l'utiliser
-            obj = JSON.parse(data);
+            let obj = JSON.parse(data);
 
             //Enregistrement de l'id passé dans l'URL pour pouvoir l'utiliser dans la recherche JSON
-            var id = `${req.params.userId}`
+            let id = `${req.params.userId}`
 
             //Suppression du JSON
             delete obj.user[id]
